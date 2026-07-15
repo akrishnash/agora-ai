@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+dist/
+build/
+next-env.d.ts
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+
+# FastAPI / local runtime
+*.log
+*.pid
+uvicorn*.log
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Package manager
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# IDEs and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Generated assets
+assets/generated/
+
+# Local databases
+*.sqlite
+*.sqlite3
+*.db
