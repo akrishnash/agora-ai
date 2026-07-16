@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import { Geist } from "next/font/google";
 import "./globals.css";
 
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist"
+});
+
 export const metadata: Metadata = {
-  title: "Agora AI",
-  description: "An AI reasoning arena where expert agents debate complex questions."
+  title: "DebateVerify",
+  description: "A calm claim-checking app that highlights weak reasoning and cleaner wording."
 };
 
 export default function RootLayout({
@@ -13,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={geist.variable}>{children}</body>
     </html>
   );
 }

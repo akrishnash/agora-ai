@@ -24,7 +24,7 @@ body {
   background: #f8fbff;
   color: var(--text);
   font-family:
-    ui-rounded, "Nunito Sans", "Avenir Next", "Segoe UI", system-ui, -apple-system,
+    var(--font-geist), ui-rounded, "Avenir Next", "Segoe UI", system-ui, -apple-system,
     BlinkMacSystemFont, sans-serif;
 }
 
