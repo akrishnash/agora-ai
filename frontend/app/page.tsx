@@ -1,292 +1,433 @@
 "use client";
 
 import {
+  AlertTriangle,
   ArrowRight,
   BadgeCheck,
-  Brain,
-  Gavel,
+  BrainCircuit,
+  CheckCircle2,
+  ExternalLink,
+  FileText,
+  Gauge,
   GitBranch,
   Loader2,
-  MessageSquarePlus,
-  Pause,
-  Play,
+  MessageSquareWarning,
+  Radio,
   Scale,
+  SearchCheck,
   ShieldAlert,
   Sparkles,
-  Vote
+  Wand2
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { createDebate, injectIntervention } from "@/lib/api";
-import type { DebateFormat, DebateSession, Expert } from "@/lib/types";
+import type { DebateFormat, DebateSession } from "@/lib/types";
 import styles from "./page.module.css";
 
-const accentByIndex = [
-  "var(--cyan)",
-  "var(--green)",
-  "var(--rose)",
-  "var(--amber)",
-  "var(--violet)",
-  "var(--blue)"
+const exampleClaims = [
+  "Open-source AGI is obviously safer because everyone can inspect the code.",
+  "Interest rates will drop by 2% this year because inflation is solved.",
+  "A new study proves caffeine prevents cognitive decline."
 ];
 
-const fallbackTopic = "Should AGI models be open source?";
-const formats: DebateFormat[] = ["Oxford", "Scientific Review", "Supreme Court", "Boardroom"];
-const prompts = [
-  "Security researcher, challenge the open-source advocate.",
-  "What evidence would change your mind?",
-  "Run a Supreme Court cross-examination.",
-  "Summarize the strongest disagreement so far."
+const auditFindings = [
+  {
+    label: "Loaded language",
+    token: "obviously",
+    tone: "bias",
+    explanation: "Attempts to preempt disagreement by implying the conclusion is already settled."
+  },
+  {
+    label: "Overgeneralization",
+    token: "everyone can inspect",
+    tone: "warning",
+    explanation: "Assumes universal expertise, time, access, and incentive to audit frontier systems."
+  },
+  {
+    label: "Category error",
+    token: "code",
+    tone: "info",
+    explanation: "AI risk is not only source code; weights, data, evaluations, deployment, and misuse pathways matter."
+  }
 ];
 
-function expertAccent(experts: Expert[], speakerId: string) {
-  const index = experts.findIndex((expert) => expert.id === speakerId);
-  return accentByIndex[index >= 0 ? index % accentByIndex.length : 5];
-}
+const quickActions = [
+  "Fact-check the strongest pro claim.",
+  "Find the weakest assumption.",
+  "Challenge the con argument.",
+  "Rewrite the claim more accurately."
+];
+
+const debateFormat: DebateFormat = "Scientific Review";
 
 export default function Home() {
-  const [topic, setTopic] = useState(fallbackTopic);
-  const [format, setFormat] = useState<DebateFormat>("Oxford");
+  const [claim, setClaim] = useState(exampleClaims[0]);
   const [session, setSession] = useState<DebateSession | null>(null);
-  const [isLive, setIsLive] = useState(true);
-  const [intervention, setIntervention] = useState("");
+  const [instruction, setInstruction] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function startDebate() {
+  async function analyzeClaim(nextClaim = claim) {
+    setClaim(nextClaim);
     setIsLoading(true);
     setError(null);
     try {
-      const nextSession = await createDebate(topic, format);
-      setSession(nextSession);
+      const result = await createDebate(nextClaim, debateFormat);
+      setSession(result);
     } catch {
-      setError("Could not reach the Agora API. Start FastAPI on port 8001, then try again.");
+      setError("Could not reach DebateVerify API. Start the FastAPI backend on port 8001.");
     } finally {
       setIsLoading(false);
     }
   }
 
-  async function submitIntervention(instruction = intervention) {
-    if (!session || !instruction.trim()) return;
+  async function runIntervention(nextInstruction = instruction) {
+    if (!session || !nextInstruction.trim()) return;
     setIsLoading(true);
     setError(null);
     try {
-      const nextSession = await injectIntervention(session, instruction.trim());
-      setSession(nextSession);
-      setIntervention("");
+      const result = await injectIntervention(session, nextInstruction.trim());
+      setSession(result);
+      setInstruction("");
     } catch {
-      setError("The intervention could not be applied. Check the backend and try again.");
+      setError("The live audit could not be updated. Check the backend and try again.");
     } finally {
       setIsLoading(false);
     }
   }
 
-  useEffect(() => {
-    void startDebate();
-  }, []);
+  if (!session) {
+    return (
+      <main className={styles.landing}>
+        <header className={styles.landingHeader}>
+          <div className={styles.logo}>
+            <SearchCheck size={22} />
+            <span>DebateVerify</span>
+          </div>
+          <div className={styles.extensionPill}>
+            <ExternalLink size={15} />
+            Browser extension mode
+          </div>
+        </header>
 
-  const experts = session?.experts ?? [];
-  const consensus = useMemo(() => {
-    if (experts.length === 0) return 0;
-    const support = experts.filter((expert) => expert.stance === "support").length;
-    const mixed = experts.filter((expert) => expert.stance === "mixed").length;
-    return Math.round(((support + mixed * 0.5) / experts.length) * 100);
-  }, [experts]);
+        <section className={styles.hero}>
+          <div className={styles.heroBadge}>
+            <Sparkles size={16} />
+            AI media literacy lab
+          </div>
+          <h1>Paste a claim. Watch AI agents test it from every angle.</h1>
+          <p>
+            DebateVerify stages opposing arguments, checks evidence quality, flags
+            weak reasoning, and turns messy public claims into a structured quality report.
+          </p>
+
+          <div className={styles.claimBox}>
+            <label htmlFor="claim">Claim to verify</label>
+            <textarea
+              id="claim"
+              onChange={(event) => setClaim(event.target.value)}
+              rows={5}
+              value={claim}
+            />
+            <div className={styles.claimActions}>
+              <span>Supports claims, headlines, URLs, and pasted excerpts.</span>
+              <button disabled={isLoading} onClick={() => analyzeClaim()} type="button">
+                {isLoading ? <Loader2 className={styles.spin} size={18} /> : <ArrowRight size={18} />}
+                Analyze claim
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.examples}>
+            <span>Example claims</span>
+            <div>
+              {exampleClaims.map((example) => (
+                <button key={example} onClick={() => analyzeClaim(example)} type="button">
+                  {example}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {error ? <div className={styles.errorBanner}>{error}</div> : null}
+        </section>
+      </main>
+    );
+  }
 
   return (
-    <main className={styles.app}>
-      <section className={styles.header}>
-        <div>
-          <div className={styles.brand}>
-            <Brain size={22} />
-            <span>Agora AI</span>
-          </div>
-          <h1>Reason through hard questions with a live expert panel.</h1>
-        </div>
-        <div className={styles.headerBadges}>
-          {session ? <div className={styles.modePill}>{session.mode} mode</div> : null}
-          <div className={styles.statusPill}>
-            <Sparkles size={16} />
-            Build Week MVP
-          </div>
-        </div>
-      </section>
+    <AnalysisWorkspace
+      claim={claim}
+      error={error}
+      instruction={instruction}
+      isLoading={isLoading}
+      onAnalyze={() => analyzeClaim()}
+      onInstructionChange={setInstruction}
+      onIntervention={runIntervention}
+      session={session}
+    />
+  );
+}
 
-      <section className={styles.queryBar} aria-label="Debate setup">
-        <label className={styles.topicField}>
-          <span>Question</span>
-          <input value={topic} onChange={(event) => setTopic(event.target.value)} />
-        </label>
-        <div className={styles.formats} aria-label="Debate format">
-          {formats.map((item) => (
-            <button
-              className={item === format ? styles.formatActive : styles.format}
-              key={item}
-              onClick={() => setFormat(item)}
-              type="button"
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-        <button className={styles.startButton} disabled={isLoading} onClick={startDebate} type="button">
-          {isLoading ? <Loader2 className={styles.spin} size={18} /> : <ArrowRight size={18} />}
-          Start
-        </button>
-      </section>
+function AnalysisWorkspace({
+  claim,
+  error,
+  instruction,
+  isLoading,
+  onAnalyze,
+  onInstructionChange,
+  onIntervention,
+  session
+}: {
+  claim: string;
+  error: string | null;
+  instruction: string;
+  isLoading: boolean;
+  onAnalyze: () => void;
+  onInstructionChange: (value: string) => void;
+  onIntervention: (value?: string) => void;
+  session: DebateSession;
+}) {
+  const credibility = useMemo(() => {
+    const average =
+      session.graph.reduce((total, node) => total + node.confidence, 0) / session.graph.length;
+    const penalty = session.graph.filter((node) => node.status !== "supported").length * 8;
+    return Math.max(18, Math.min(82, Math.round(average - penalty)));
+  }, [session.graph]);
 
-      {error ? <div className={styles.errorBanner}>{error}</div> : null}
+  const proTurns = session.turns.filter((turn) =>
+    ["open", "economist", "safety"].includes(turn.speaker_id)
+  );
+  const conTurns = session.turns.filter((turn) => ["security", "policy"].includes(turn.speaker_id));
+  const auditTurns = session.turns.filter((turn) => turn.speaker_id === "moderator");
 
-      <section className={styles.workspace}>
-        <aside className={styles.panelColumn} aria-label="Expert panel">
-          <div className={styles.sectionHeader}>
-            <span>Generated Panel</span>
-            <BadgeCheck size={16} />
+  return (
+    <main className={styles.workspaceShell}>
+      <header className={styles.topbar}>
+        <div className={styles.topbarLeft}>
+          <div className={styles.logo}>
+            <SearchCheck size={21} />
+            <span>DebateVerify</span>
           </div>
-          <div className={styles.expertList}>
-            {experts.map((expert, index) => (
-              <article className={styles.expert} key={expert.id}>
-                <div
-                  className={styles.avatar}
-                  style={{ backgroundColor: accentByIndex[index % accentByIndex.length] }}
-                >
-                  {expert.name
-                    .split(" ")
-                    .map((word) => word[0])
-                    .join("")}
-                </div>
+          <nav>
+            <button className={styles.navActive} type="button">Deep Analysis</button>
+            <button type="button">Extension</button>
+            <button type="button">Workspace</button>
+          </nav>
+        </div>
+        <div className={styles.topbarRight}>
+          <div className={styles.livePill}>
+            <Radio size={15} />
+            Live fact-checking
+          </div>
+          <div className={styles.scorePill}>
+            <Gauge size={15} />
+            Credibility {credibility}%
+          </div>
+        </div>
+      </header>
+
+      {error ? <div className={styles.inlineError}>{error}</div> : null}
+
+      <section className={styles.analysisGrid}>
+        <aside className={styles.claimPanel}>
+          <PanelTitle icon={<FileText size={16} />} title="Original target claim" />
+          <div className={styles.highlightedClaim}>
+            "Open-source AGI is{" "}
+            <mark className={styles.biasMark}>obviously</mark> safer because{" "}
+            <mark className={styles.warningMark}>everyone can inspect</mark> the{" "}
+            <mark className={styles.infoMark}>code</mark>."
+          </div>
+
+          <div className={styles.findingStack}>
+            <PanelTitle icon={<MessageSquareWarning size={16} />} title="Linguistic audit" />
+            {auditFindings.map((finding) => (
+              <article className={styles.finding} data-tone={finding.tone} key={finding.label}>
                 <div>
-                  <h2>{expert.name}</h2>
-                  <p>{expert.role}</p>
-                  <div className={styles.expertMeta}>
-                    <span>{expert.stance}</span>
-                    <span>{expert.confidence}% confidence</span>
-                  </div>
+                  <strong>{finding.label}</strong>
+                  <span>{finding.token}</span>
                 </div>
+                <p>{finding.explanation}</p>
               </article>
             ))}
           </div>
-          <div className={styles.consensus}>
+
+          <div className={styles.claimTypes}>
+            <PanelTitle icon={<BadgeCheck size={16} />} title="Claim typology" />
             <div>
-              <span>Consensus drift</span>
-              <strong>{consensus}%</strong>
-            </div>
-            <div className={styles.meter} aria-hidden="true">
-              <span style={{ width: `${consensus}%` }} />
+              <span>Factual</span>
+              <span>Value</span>
+              <span>Causal</span>
+              <span>Framing</span>
             </div>
           </div>
         </aside>
 
-        <section className={styles.debateColumn} aria-label="Live debate">
-          <div className={styles.debateTopbar}>
+        <section className={styles.debateStage}>
+          <div className={styles.stageHeader}>
             <div>
-              <span className={styles.eyebrow}>{session?.format ?? format} Debate</span>
-              <h2>{session?.topic ?? topic}</h2>
+              <span>Multi-agent verification</span>
+              <h2>{claim}</h2>
             </div>
-            <button
-              className={styles.iconButton}
-              onClick={() => setIsLive((current) => !current)}
-              title={isLive ? "Pause debate" : "Resume debate"}
-              type="button"
-            >
-              {isLive ? <Pause size={18} /> : <Play size={18} />}
+            <button disabled={isLoading} onClick={onAnalyze} type="button">
+              {isLoading ? <Loader2 className={styles.spin} size={16} /> : <Wand2 size={16} />}
+              Rerun
             </button>
           </div>
 
-          <div className={styles.transcript}>
-            {session?.turns.map((turn, index) => {
-              const expert = experts.find((item) => item.id === turn.speaker_id);
-              const isModerator = turn.speaker_id === "moderator";
-              return (
-                <article className={styles.turn} key={`${turn.speaker_id}-${index}`}>
-                  <div
-                    className={styles.turnMarker}
-                    style={{ backgroundColor: expertAccent(experts, turn.speaker_id) }}
-                  />
-                  <div className={styles.turnBody}>
-                    <div className={styles.turnHeader}>
-                      <span>{isModerator ? "Moderator" : expert?.name ?? turn.speaker_id}</span>
-                      <small>{turn.relation}</small>
-                    </div>
-                    <p>{turn.claim}</p>
-                    <div className={styles.evidence}>
-                      <Scale size={15} />
-                      {turn.evidence}
-                    </div>
-                  </div>
-                </article>
-              );
-            }) ?? <div className={styles.loadingState}>Assembling the room...</div>}
+          <div className={styles.streams}>
+            <ArgumentStream
+              icon={<BrainCircuit size={18} />}
+              label="Pro Agent"
+              tone="pro"
+              turns={proTurns}
+            />
+            <ArgumentStream
+              icon={<ShieldAlert size={18} />}
+              label="Con Agent"
+              tone="con"
+              turns={conTurns}
+            />
           </div>
 
-          <div className={styles.interventionBox}>
-            <MessageSquarePlus size={18} />
-            <textarea
-              aria-label="Intervene in the debate"
-              onChange={(event) => setIntervention(event.target.value)}
-              placeholder="Interrupt, challenge a speaker, or add new evidence..."
-              value={intervention}
+          <div className={styles.auditRail}>
+            <div className={styles.auditChip}>
+              <CheckCircle2 size={16} />
+              Fact checker: cryptography analogy is relevant but incomplete.
+            </div>
+            <div className={styles.auditChipWarning}>
+              <AlertTriangle size={16} />
+              Logic auditor: "everyone can inspect" overstates practical auditability.
+            </div>
+            {auditTurns.map((turn) => (
+              <div className={styles.auditChip} key={turn.claim}>
+                <Scale size={16} />
+                {turn.claim}
+              </div>
+            ))}
+          </div>
+
+          <div className={styles.commandBar}>
+            <input
+              onChange={(event) => onInstructionChange(event.target.value)}
+              placeholder="Ask agents to fact-check, challenge, rewrite, or expose weak reasoning..."
+              value={instruction}
             />
-            <button disabled={isLoading || !session} onClick={() => submitIntervention()} type="button">
+            <button disabled={isLoading} onClick={() => onIntervention()} type="button">
               Inject
             </button>
           </div>
-          <div className={styles.promptRow}>
-            {prompts.map((prompt) => (
-              <button
-                disabled={isLoading || !session}
-                key={prompt}
-                onClick={() => submitIntervention(prompt)}
-                type="button"
-              >
-                {prompt}
+          <div className={styles.quickActions}>
+            {quickActions.map((action) => (
+              <button disabled={isLoading} key={action} onClick={() => onIntervention(action)} type="button">
+                {action}
               </button>
             ))}
           </div>
         </section>
 
-        <aside className={styles.graphColumn} aria-label="Argument graph">
-          <div className={styles.sectionHeader}>
-            <span>Argument Graph</span>
-            <GitBranch size={16} />
-          </div>
-          <div className={styles.graphCanvas}>
-            {session?.graph.map((node, index) => (
-              <div className={styles.claimNode} key={`${node.label}-${index}`}>
-                <div className={styles.nodeIcon}>
-                  {node.status === "contested" ? (
-                    <ShieldAlert size={16} />
-                  ) : node.status === "revised" ? (
-                    <Gavel size={16} />
-                  ) : (
-                    <Vote size={16} />
-                  )}
-                </div>
+        <aside className={styles.reportPanel}>
+          <PanelTitle icon={<GitBranch size={16} />} title="Evidence topology" />
+          <div className={styles.graphBox}>
+            {session.graph.map((node, index) => (
+              <article className={styles.graphNode} data-status={node.status} key={`${node.label}-${index}`}>
+                <span />
                 <div>
-                  <p>{node.label}</p>
-                  <span>{node.confidence}% confidence</span>
+                  <strong>{node.label}</strong>
+                  <small>{node.confidence}% confidence</small>
                 </div>
-                {index < session.graph.length - 1 ? <i aria-hidden="true" /> : null}
-              </div>
-            )) ?? <div className={styles.loadingState}>No graph yet.</div>}
+              </article>
+            ))}
           </div>
 
-          <div className={styles.brief}>
-            <span>Moderator Brief</span>
-            <h2>Current strongest position</h2>
-            <p>{session?.brief.strongest_position ?? "The moderator is preparing the brief."}</p>
-            {session ? (
-              <dl className={styles.briefDetails}>
-                <dt>Weakest assumption</dt>
-                <dd>{session.brief.weakest_assumption}</dd>
-                <dt>Unresolved disagreement</dt>
-                <dd>{session.brief.unresolved_disagreement}</dd>
-                <dt>Next question</dt>
-                <dd>{session.brief.next_question}</dd>
-              </dl>
-            ) : null}
+          <div className={styles.qualityReport}>
+            <PanelTitle icon={<Scale size={16} />} title="Debate quality report" />
+            <div className={styles.verdict}>
+              <AlertTriangle size={20} />
+              <div>
+                <span>Verdict</span>
+                <strong>Partially supported</strong>
+              </div>
+            </div>
+            <ReportItem
+              tone="danger"
+              title="False or unsupported claim"
+              value='"Everyone can inspect the code" is misleading; meaningful frontier-model audits require specialist access and context.'
+            />
+            <ReportItem
+              tone="purple"
+              title="Weakest assumption"
+              value={session.brief.weakest_assumption}
+            />
+            <ReportItem
+              tone="green"
+              title="Better version"
+              value={
+                session.brief.strongest_position ||
+                "Open releases can improve scrutiny, but frontier systems need staged access based on risk."
+              }
+            />
+            <ReportItem title="What to verify next" value={session.brief.next_question} />
+            <button className={styles.shareButton} type="button">
+              Generate shareable report
+            </button>
           </div>
         </aside>
       </section>
     </main>
+  );
+}
+
+function PanelTitle({ icon, title }: { icon: React.ReactNode; title: string }) {
+  return (
+    <div className={styles.panelTitle}>
+      {icon}
+      <span>{title}</span>
+    </div>
+  );
+}
+
+function ArgumentStream({
+  icon,
+  label,
+  tone,
+  turns
+}: {
+  icon: React.ReactNode;
+  label: string;
+  tone: "pro" | "con";
+  turns: DebateSession["turns"];
+}) {
+  return (
+    <div className={styles.argumentStream} data-tone={tone}>
+      <div className={styles.streamTitle}>
+        {icon}
+        <span>{label}</span>
+      </div>
+      {turns.map((turn) => (
+        <article key={`${turn.speaker_id}-${turn.claim}`}>
+          <strong>{turn.relation}</strong>
+          <p>{turn.claim}</p>
+          <small>{turn.evidence}</small>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function ReportItem({
+  title,
+  tone = "neutral",
+  value
+}: {
+  title: string;
+  tone?: "danger" | "green" | "neutral" | "purple";
+  value: string;
+}) {
+  return (
+    <article className={styles.reportItem} data-tone={tone}>
+      <strong>{title}</strong>
+      <p>{value}</p>
+    </article>
   );
 }
