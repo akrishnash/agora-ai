@@ -32,17 +32,35 @@
   max-width: 820px;
 }
 
-.statusPill {
+.headerBadges {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statusPill,
+.modePill {
   align-items: center;
-  background: rgba(242, 184, 75, 0.1);
-  border: 1px solid rgba(242, 184, 75, 0.24);
   border-radius: 999px;
-  color: #f5d894;
   display: flex;
   flex: 0 0 auto;
   font-size: 13px;
   gap: 8px;
   padding: 9px 13px;
+}
+
+.statusPill {
+  background: rgba(242, 184, 75, 0.1);
+  border: 1px solid rgba(242, 184, 75, 0.24);
+  color: #f5d894;
+}
+
+.modePill {
+  background: rgba(99, 215, 231, 0.1);
+  border: 1px solid rgba(99, 215, 231, 0.24);
+  color: var(--cyan);
+  text-transform: uppercase;
 }
 
 .queryBar {
@@ -57,6 +75,16 @@
   margin: 0 auto 16px;
   max-width: 1480px;
   padding: 12px;
+}
+
+.errorBanner {
+  background: rgba(239, 123, 143, 0.12);
+  border: 1px solid rgba(239, 123, 143, 0.32);
+  border-radius: 8px;
+  color: #ffc5ce;
+  margin: 0 auto 16px;
+  max-width: 1480px;
+  padding: 12px 14px;
 }
 
 .topicField {
@@ -127,6 +155,23 @@
   justify-content: center;
   min-height: 52px;
   padding: 0 18px;
+}
+
+.startButton:disabled,
+.interventionBox button:disabled,
+.promptRow button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .workspace {
@@ -201,7 +246,8 @@
 .expert p,
 .expertMeta,
 .evidence,
-.brief p {
+.brief p,
+.briefDetails dd {
   color: var(--muted);
 }
 
@@ -298,6 +344,17 @@
   gap: 12px;
   overflow: auto;
   padding: 16px;
+}
+
+.loadingState {
+  align-items: center;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  display: flex;
+  min-height: 120px;
+  justify-content: center;
+  padding: 20px;
 }
 
 .turn {
@@ -468,6 +525,26 @@
   margin: 0;
 }
 
+.briefDetails {
+  border-top: 1px solid rgba(242, 184, 75, 0.18);
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding-top: 12px;
+}
+
+.briefDetails dt {
+  color: var(--amber);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.briefDetails dd {
+  font-size: 13px;
+  line-height: 1.42;
+  margin: -4px 0 4px;
+}
+
 @media (max-width: 1180px) {
   .workspace {
     grid-template-columns: 1fr;
@@ -495,6 +572,10 @@
 
   .header {
     display: grid;
+  }
+
+  .headerBadges {
+    align-items: flex-start;
   }
 
   .formats {
