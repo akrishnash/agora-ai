@@ -8,6 +8,7 @@ DebateFormat = Literal["Oxford", "Scientific Review", "Supreme Court", "Boardroo
 Stance = Literal["support", "oppose", "mixed"]
 Relation = Literal["opens", "supports", "challenges", "revises"]
 NodeStatus = Literal["supported", "contested", "revised"]
+SessionMode = Literal["demo", "openai"]
 
 
 class DebateRequest(BaseModel):
@@ -51,3 +52,9 @@ class DebateSession(BaseModel):
     turns: list[DebateTurn]
     graph: list[ClaimNode]
     brief: ModeratorBrief
+    mode: SessionMode = "demo"
+
+
+class InterventionRequest(BaseModel):
+    session: DebateSession
+    instruction: str = Field(min_length=4, max_length=500)
