@@ -6,6 +6,7 @@ from app.models import (
     DebateSession,
     DebateTurn,
     Expert,
+    InterventionRequest,
     ModeratorBrief,
 )
 
@@ -71,6 +72,18 @@ def build_demo_debate(request: DebateRequest) -> DebateSession:
                 evidence="Cyber, biosecurity, and persuasion risks scale differently from normal software vulnerabilities.",
                 relation="challenges",
             ),
+            DebateTurn(
+                speaker_id="economist",
+                claim="Concentrating frontier systems in a few firms creates market power and slows downstream innovation.",
+                evidence="Platform economics suggests open ecosystems often expand total market creation.",
+                relation="supports",
+            ),
+            DebateTurn(
+                speaker_id="safety",
+                claim="The defensible policy is staged openness: publish evaluations, tools, and smaller models while gating the highest-risk capabilities.",
+                evidence="This balances independent scrutiny with proportional release controls.",
+                relation="revises",
+            ),
         ],
         graph=[
             ClaimNode(
@@ -84,6 +97,11 @@ def build_demo_debate(request: DebateRequest) -> DebateSession:
                 status="contested",
             ),
             ClaimNode(
+                label="Open ecosystems accelerate innovation",
+                confidence=74,
+                status="supported",
+            ),
+            ClaimNode(
                 label="Staged release is the strongest compromise",
                 confidence=86,
                 status="revised",
@@ -95,4 +113,39 @@ def build_demo_debate(request: DebateRequest) -> DebateSession:
             unresolved_disagreement="Whether open access reduces concentrated power more than it increases misuse risk.",
             next_question="What concrete capability threshold should trigger restricted release?",
         ),
+        mode="demo",
     )
+
+
+def build_demo_intervention(request: InterventionRequest) -> DebateSession:
+    session = request.session.model_copy(deep=True)
+    session.turns.append(
+        DebateTurn(
+            speaker_id="security",
+            claim="The user's challenge changes the burden of proof: advocates must separate auditability benefits from unrestricted release of high-risk weights.",
+            evidence=f"Intervention considered: {request.instruction}",
+            relation="challenges",
+        )
+    )
+    session.turns.append(
+        DebateTurn(
+            speaker_id="open",
+            claim="I revise my position: openness should be layered, with public evaluations and reproducible safety tooling released before full frontier-weight access.",
+            evidence="This preserves independent scrutiny while acknowledging asymmetric misuse risks.",
+            relation="revises",
+        )
+    )
+    session.graph.append(
+        ClaimNode(
+            label="Layered openness beats binary release",
+            confidence=89,
+            status="revised",
+        )
+    )
+    session.brief = ModeratorBrief(
+        strongest_position="Layered openness is now strongest: open evaluations, safety tooling, and lower-risk models first; gate frontier weights behind thresholds.",
+        weakest_assumption="That we can define capability thresholds before a model is widely tested by independent researchers.",
+        unresolved_disagreement="Whether gatekeeping frontier weights protects society or concentrates too much power in a few labs.",
+        next_question="Which concrete evaluations should trigger public release, staged release, or restricted access?",
+    )
+    return session
