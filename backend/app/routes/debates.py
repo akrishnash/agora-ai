@@ -1,11 +1,16 @@
 from fastapi import APIRouter
 
-from app.models import DebateRequest, DebateSession
-from app.services.demo_debate import build_demo_debate
+from app.models import DebateRequest, DebateSession, InterventionRequest
+from app.services.openai_debate import apply_debate_intervention, create_debate_session
 
 router = APIRouter()
 
 
 @router.post("", response_model=DebateSession)
 def create_debate(request: DebateRequest) -> DebateSession:
-    return build_demo_debate(request)
+    return create_debate_session(request)
+
+
+@router.post("/interventions", response_model=DebateSession)
+def intervene(request: InterventionRequest) -> DebateSession:
+    return apply_debate_intervention(request)
