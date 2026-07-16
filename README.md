@@ -32,8 +32,8 @@ The project is being built for OpenAI Build Week as a complete product that demo
 
 ```text
 agora-ai/
-├── frontend/   # Next.js application
-├── backend/    # FastAPI services and debate orchestration
+├── frontend/   # Next.js debate arena
+├── backend/    # FastAPI debate orchestration API
 ├── docs/       # Product, architecture, and hackathon documentation
 ├── prompts/    # Prompt templates and agent definitions
 ├── assets/     # Images, demo assets, and design resources
@@ -50,6 +50,30 @@ agora-ai/
 - Data: Supabase or PostgreSQL
 - Deployment: Vercel and Railway/Render/Fly.io
 
+## Local Development
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend runs on `http://localhost:3000`.
+
+### Backend
+
+```bash
+cd backend
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+The backend runs on `http://localhost:8000`.
+
 ## Development Principles
 
 - Build a working product, not a static demo.
@@ -57,6 +81,13 @@ agora-ai/
 - Prefer structured outputs for agent state and debate summaries.
 - Make the user a participant, not a passive transcript reader.
 - Document how Codex and OpenAI models are used throughout development.
+
+## Current Build Slice
+
+- A polished Next.js arena UI for the main debate flow.
+- A deterministic FastAPI `/debates` endpoint with the final data contract.
+- Demo content for the topic: "Should AGI models be open source?"
+- Prompt and demo documentation for the next implementation sprint.
 
 ## License
 

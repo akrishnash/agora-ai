@@ -22,6 +22,7 @@ htmlcov/
 .venv/
 venv/
 env/
+*.tsbuildinfo
 
 # FastAPI / local runtime
 *.log
@@ -33,14 +34,12 @@ uvicorn*.log
 .env.*
 !.env.example
 
-# Package manager
+# Package manager logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
+.npm-cache/
 
 # IDEs and OS files
 .DS_Store

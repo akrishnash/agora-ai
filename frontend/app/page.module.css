@@ -1,0 +1,512 @@
+.app {
+  min-height: 100vh;
+  padding: 28px;
+}
+
+.header {
+  align-items: flex-start;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  margin: 0 auto 18px;
+  max-width: 1480px;
+}
+
+.brand {
+  align-items: center;
+  color: var(--amber);
+  display: flex;
+  font-size: 15px;
+  font-weight: 700;
+  gap: 10px;
+  letter-spacing: 0;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  font-size: clamp(30px, 4vw, 56px);
+  letter-spacing: 0;
+  line-height: 1.02;
+  margin: 0;
+  max-width: 820px;
+}
+
+.statusPill {
+  align-items: center;
+  background: rgba(242, 184, 75, 0.1);
+  border: 1px solid rgba(242, 184, 75, 0.24);
+  border-radius: 999px;
+  color: #f5d894;
+  display: flex;
+  flex: 0 0 auto;
+  font-size: 13px;
+  gap: 8px;
+  padding: 9px 13px;
+}
+
+.queryBar {
+  align-items: stretch;
+  background: rgba(18, 20, 26, 0.86);
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(280px, 1fr) auto auto;
+  margin: 0 auto 16px;
+  max-width: 1480px;
+  padding: 12px;
+}
+
+.topicField {
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px 12px;
+}
+
+.topicField span {
+  color: var(--subtle);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.topicField input {
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  font-size: 18px;
+  outline: none;
+  width: 100%;
+}
+
+.formats {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.format,
+.formatActive,
+.startButton,
+.iconButton,
+.interventionBox button,
+.promptRow button {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--text);
+}
+
+.format,
+.formatActive {
+  background: var(--panel-strong);
+  color: var(--muted);
+  min-height: 40px;
+  padding: 0 11px;
+}
+
+.formatActive {
+  background: rgba(99, 215, 231, 0.12);
+  border-color: rgba(99, 215, 231, 0.42);
+  color: var(--cyan);
+}
+
+.startButton {
+  align-items: center;
+  background: var(--text);
+  color: #101216;
+  display: flex;
+  font-weight: 800;
+  gap: 8px;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 18px;
+}
+
+.workspace {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 310px minmax(0, 1fr) 360px;
+  margin: 0 auto;
+  max-width: 1480px;
+}
+
+.panelColumn,
+.debateColumn,
+.graphColumn {
+  background: rgba(18, 20, 26, 0.84);
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  min-width: 0;
+}
+
+.panelColumn,
+.graphColumn {
+  padding: 14px;
+}
+
+.sectionHeader {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  font-size: 13px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.expertList {
+  display: grid;
+  gap: 10px;
+}
+
+.expert {
+  align-items: center;
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 42px 1fr;
+  padding: 10px;
+}
+
+.avatar {
+  align-items: center;
+  border-radius: 7px;
+  color: #0b0c0f;
+  display: flex;
+  font-size: 13px;
+  font-weight: 900;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+}
+
+.expert h2,
+.expert p {
+  margin: 0;
+}
+
+.expert h2 {
+  font-size: 14px;
+}
+
+.expert p,
+.expertMeta,
+.evidence,
+.brief p {
+  color: var(--muted);
+}
+
+.expert p {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.expertMeta {
+  display: flex;
+  font-size: 11px;
+  gap: 8px;
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+.consensus {
+  background: #0d0f13;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-top: 14px;
+  padding: 12px;
+}
+
+.consensus div:first-child {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.consensus span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.consensus strong {
+  color: var(--green);
+}
+
+.meter {
+  background: #232733;
+  border-radius: 999px;
+  height: 8px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.meter span {
+  background: linear-gradient(90deg, var(--rose), var(--amber), var(--green));
+  display: block;
+  height: 100%;
+}
+
+.debateColumn {
+  display: flex;
+  flex-direction: column;
+  min-height: 680px;
+  overflow: hidden;
+}
+
+.debateTopbar {
+  align-items: center;
+  border-bottom: 1px solid var(--line-soft);
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.eyebrow {
+  color: var(--cyan);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.debateTopbar h2 {
+  font-size: 22px;
+  letter-spacing: 0;
+  margin: 4px 0 0;
+}
+
+.iconButton {
+  align-items: center;
+  background: var(--panel-strong);
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+}
+
+.transcript {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  overflow: auto;
+  padding: 16px;
+}
+
+.turn {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 4px 1fr;
+}
+
+.turnMarker {
+  border-radius: 999px;
+}
+
+.turnBody {
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.turnHeader {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.turnHeader span {
+  font-weight: 800;
+}
+
+.turnHeader small {
+  color: var(--subtle);
+  text-transform: uppercase;
+}
+
+.turnBody p {
+  font-size: 15px;
+  line-height: 1.48;
+  margin: 9px 0 10px;
+}
+
+.evidence {
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  display: flex;
+  font-size: 13px;
+  gap: 8px;
+  line-height: 1.4;
+  padding: 9px;
+}
+
+.interventionBox {
+  align-items: center;
+  border-top: 1px solid var(--line-soft);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: auto 1fr auto;
+  padding: 12px;
+}
+
+.interventionBox textarea {
+  background: #0d0f13;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--text);
+  min-height: 44px;
+  outline: none;
+  padding: 11px 12px;
+  resize: vertical;
+}
+
+.interventionBox button {
+  background: rgba(117, 210, 138, 0.12);
+  border-color: rgba(117, 210, 138, 0.38);
+  color: var(--green);
+  font-weight: 800;
+  min-height: 44px;
+  padding: 0 16px;
+}
+
+.promptRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 12px 12px;
+}
+
+.promptRow button {
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 7px 9px;
+}
+
+.graphCanvas {
+  display: grid;
+  gap: 10px;
+}
+
+.claimNode {
+  align-items: center;
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 34px 1fr;
+  padding: 10px;
+  position: relative;
+}
+
+.claimNode i {
+  background: var(--line);
+  bottom: -11px;
+  display: block;
+  height: 10px;
+  left: 26px;
+  position: absolute;
+  width: 1px;
+}
+
+.nodeIcon {
+  align-items: center;
+  background: #0d0f13;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--cyan);
+  display: flex;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.claimNode p {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 0 0 4px;
+}
+
+.claimNode span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.brief {
+  background: rgba(242, 184, 75, 0.08);
+  border: 1px solid rgba(242, 184, 75, 0.22);
+  border-radius: 8px;
+  margin-top: 14px;
+  padding: 14px;
+}
+
+.brief span {
+  color: var(--amber);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.brief h2 {
+  font-size: 17px;
+  margin: 8px 0;
+}
+
+.brief p {
+  font-size: 14px;
+  line-height: 1.46;
+  margin: 0;
+}
+
+@media (max-width: 1180px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .panelColumn,
+  .graphColumn {
+    order: 2;
+  }
+
+  .debateColumn {
+    order: 1;
+  }
+}
+
+@media (max-width: 760px) {
+  .app {
+    padding: 16px;
+  }
+
+  .header,
+  .queryBar {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    display: grid;
+  }
+
+  .formats {
+    align-items: stretch;
+  }
+
+  .format,
+  .formatActive {
+    flex: 1 1 140px;
+  }
+
+  .interventionBox {
+    grid-template-columns: 1fr;
+  }
+}
