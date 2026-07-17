@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -7,7 +7,6 @@ from pydantic import BaseModel, Field
 DebateFormat = Literal["Oxford", "Scientific Review", "Supreme Court", "Boardroom"]
 Stance = Literal["support", "oppose", "mixed"]
 Relation = Literal["opens", "supports", "challenges", "revises"]
-NodeStatus = Literal["supported", "contested", "revised"]
 SessionMode = Literal["demo", "openai"]
 
 
@@ -25,16 +24,23 @@ class Expert(BaseModel):
 
 
 class DebateTurn(BaseModel):
+    """A single move in the debate.
+
+    Each turn is also a node in the argument graph. ``target_id`` links this
+    claim to the prior claim it answers, and ``relation`` colors that edge.
+    ``confidence`` is how strongly this claim is held when it is first made;
+    the frontend graph engine then propagates confidence as later turns
+    support, challenge, or revise earlier nodes.
+    """
+
+    id: str
     speaker_id: str
+    headline: str = Field(min_length=1, max_length=120)
     claim: str
     evidence: str
     relation: Relation
-
-
-class ClaimNode(BaseModel):
-    label: str
+    target_id: Optional[str] = None
     confidence: int = Field(ge=0, le=100)
-    status: NodeStatus
 
 
 class ModeratorBrief(BaseModel):
@@ -50,7 +56,6 @@ class DebateSession(BaseModel):
     format: DebateFormat
     experts: list[Expert]
     turns: list[DebateTurn]
-    graph: list[ClaimNode]
     brief: ModeratorBrief
     mode: SessionMode = "demo"
 

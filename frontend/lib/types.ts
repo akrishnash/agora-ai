@@ -1,8 +1,10 @@
 export type DebateFormat = "Oxford" | "Scientific Review" | "Supreme Court" | "Boardroom";
 export type Stance = "support" | "oppose" | "mixed";
 export type Relation = "opens" | "supports" | "challenges" | "revises";
-export type NodeStatus = "supported" | "contested" | "revised";
 export type SessionMode = "demo" | "openai";
+
+// Derived on the client by the graph engine — not sent by the API.
+export type NodeStatus = "open" | "supported" | "contested" | "revised";
 
 export type Expert = {
   id: string;
@@ -13,16 +15,14 @@ export type Expert = {
 };
 
 export type DebateTurn = {
+  id: string;
   speaker_id: string;
+  headline: string;
   claim: string;
   evidence: string;
   relation: Relation;
-};
-
-export type ClaimNode = {
-  label: string;
+  target_id: string | null;
   confidence: number;
-  status: NodeStatus;
 };
 
 export type ModeratorBrief = {
@@ -38,7 +38,6 @@ export type DebateSession = {
   format: DebateFormat;
   experts: Expert[];
   turns: DebateTurn[];
-  graph: ClaimNode[];
   brief: ModeratorBrief;
   mode: SessionMode;
 };

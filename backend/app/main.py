@@ -1,5 +1,9 @@
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+# Load backend/.env (OPENAI_API_KEY, OPENAI_MODEL) before anything reads os.environ.
+load_dotenv()
 
 from app.routes.debates import router as debates_router
 

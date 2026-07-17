@@ -1,5 +1,7 @@
-fastapi==0.121.0
-uvicorn[standard]==0.34.0
-pydantic==2.9.2
-python-dotenv==1.0.1
-openai==2.6.0
+# Python 3.11–3.14 compatible. Pydantic/FastAPI pinned to versions that ship
+# prebuilt wheels for 3.14 (older pins force a from-source pydantic-core build).
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.34
+pydantic>=2.12
+python-dotenv>=1.0.1
+openai>=2.0

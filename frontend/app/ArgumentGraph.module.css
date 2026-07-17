@@ -1,0 +1,236 @@
+/* ============================================================
+   ARGUMENT GRAPH — React Flow custom nodes + dark theming
+   ============================================================ */
+
+.flowWrap {
+  height: 100%;
+  width: 100%;
+}
+
+.flow {
+  background: transparent;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── CLAIM NODE ─────────────────────────────────────────────── */
+.node {
+  animation: nodeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  background: linear-gradient(180deg, rgba(20, 28, 50, 0.92), rgba(13, 18, 32, 0.92));
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.8rem 0.85rem;
+  position: relative;
+  transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+  width: 232px;
+}
+
+@keyframes nodeIn {
+  from { opacity: 0; transform: scale(0.9) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Status → border + accent glow */
+.node[data-status="open"]      { border-color: rgba(129, 140, 248, 0.55); }
+.node[data-status="supported"] { border-color: rgba(34, 197, 94, 0.5); }
+.node[data-status="contested"] { border-color: rgba(239, 68, 68, 0.6); }
+.node[data-status="revised"]   { border-color: rgba(245, 158, 11, 0.6); }
+
+.node[data-status="contested"] {
+  animation: nodeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1), contestPulse 2s ease-in-out infinite;
+}
+
+@keyframes contestPulse {
+  0%, 100% { box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35); }
+  50%       { box-shadow: 0 8px 30px rgba(239, 68, 68, 0.28); }
+}
+
+/* Newest node — spotlight */
+.node[data-newest="true"] {
+  border-color: rgba(129, 140, 248, 0.85);
+  box-shadow: 0 10px 34px rgba(99, 102, 241, 0.4);
+  transform: translateY(-1px);
+}
+
+/* ── HEAD ───────────────────────────────────────────────────── */
+.nodeHead {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.avatar {
+  align-items: center;
+  border-radius: 8px;
+  display: flex;
+  flex-shrink: 0;
+  font-size: 0.62rem;
+  font-weight: 800;
+  height: 28px;
+  justify-content: center;
+  letter-spacing: 0.02em;
+  width: 28px;
+}
+
+.avatar[data-stance="support"] { background: rgba(34, 197, 94, 0.14);  border: 1px solid rgba(34, 197, 94, 0.35);  color: #4ade80; }
+.avatar[data-stance="oppose"]  { background: rgba(239, 68, 68, 0.14);  border: 1px solid rgba(239, 68, 68, 0.35);  color: #f87171; }
+.avatar[data-stance="mixed"]   { background: rgba(245, 158, 11, 0.14); border: 1px solid rgba(245, 158, 11, 0.35); color: #fbbf24; }
+.avatar[data-stance="mod"]     { background: rgba(99, 102, 241, 0.16); border: 1px solid rgba(99, 102, 241, 0.4);  color: #a5b4fc; }
+
+.who {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.name {
+  color: var(--text-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.role {
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.relBadge {
+  align-items: center;
+  border-radius: 6px;
+  display: flex;
+  height: 20px;
+  justify-content: center;
+  margin-left: auto;
+  width: 20px;
+}
+
+.relBadge[data-rel="opens"]      { background: rgba(129, 140, 248, 0.15); color: #a5b4fc; }
+.relBadge[data-rel="supports"]   { background: rgba(34, 197, 94, 0.15);  color: #4ade80; }
+.relBadge[data-rel="challenges"] { background: rgba(239, 68, 68, 0.15);  color: #f87171; }
+.relBadge[data-rel="revises"]    { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+
+/* ── HEADLINE ───────────────────────────────────────────────── */
+.headline {
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.32;
+}
+
+/* ── METER ──────────────────────────────────────────────────── */
+.meter {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.track {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  flex: 1;
+  height: 5px;
+  overflow: hidden;
+}
+
+.fill {
+  border-radius: 3px;
+  height: 100%;
+  transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease;
+}
+
+.fill[data-status="open"]      { background: linear-gradient(90deg, #6366f1, #818cf8); }
+.fill[data-status="supported"] { background: linear-gradient(90deg, #16a34a, #4ade80); }
+.fill[data-status="contested"] { background: linear-gradient(90deg, #dc2626, #f87171); }
+.fill[data-status="revised"]   { background: linear-gradient(90deg, #d97706, #fbbf24); }
+
+.conf {
+  color: var(--text-secondary);
+  font-size: 0.66rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  min-width: 30px;
+  text-align: right;
+}
+
+/* ── FOOT ───────────────────────────────────────────────────── */
+.nodeFoot {
+  align-items: center;
+  display: flex;
+  gap: 0.4rem;
+  justify-content: space-between;
+}
+
+.statusPill {
+  border-radius: 5px;
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.12rem 0.4rem;
+  text-transform: uppercase;
+}
+
+.statusPill[data-status="open"]      { background: rgba(129, 140, 248, 0.14); color: #a5b4fc; }
+.statusPill[data-status="supported"] { background: rgba(34, 197, 94, 0.14);  color: #4ade80; }
+.statusPill[data-status="contested"] { background: rgba(239, 68, 68, 0.14);  color: #f87171; }
+.statusPill[data-status="revised"]   { background: rgba(245, 158, 11, 0.14); color: #fbbf24; }
+
+.delta {
+  font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+.delta[data-dir="down"] { color: #f87171; }
+.delta[data-dir="up"]   { color: #4ade80; }
+
+/* ── HANDLES (subtle) ───────────────────────────────────────── */
+.handle {
+  background: rgba(148, 163, 184, 0.5) !important;
+  border: none !important;
+  height: 5px !important;
+  width: 5px !important;
+  min-width: 5px !important;
+  min-height: 5px !important;
+}
+
+/* ── REACT FLOW DARK OVERRIDES ──────────────────────────────── */
+.flow :global(.react-flow__controls) {
+  background: rgba(13, 18, 32, 0.9);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.flow :global(.react-flow__controls-button) {
+  background: transparent;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  fill: var(--text-secondary);
+}
+
+.flow :global(.react-flow__controls-button:hover) {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.flow :global(.react-flow__controls-button svg) {
+  fill: currentColor;
+}
+
+.flow :global(.react-flow__edge-path) {
+  transition: stroke 0.3s ease;
+}
