@@ -1,41 +1,111 @@
 :root {
-  color-scheme: light;
-  --text: #172033;
-  --muted: #667085;
-  --subtle: #98a2b3;
-  --line: rgba(31, 41, 51, 0.1);
-  --green: #377d71;
-  --cyan: #3aa6d8;
-  --amber: #cc7a00;
-  --rose: #df6b57;
+  color-scheme: dark;
+  --font: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+
+  /* Brand Palette */
+  --indigo-50: #eef2ff;
+  --indigo-200: #c7d2fe;
+  --indigo-400: #818cf8;
+  --indigo-500: #6366f1;
+  --indigo-600: #4f46e5;
+  --indigo-700: #4338ca;
+
+  --purple-400: #c084fc;
+  --purple-500: #a855f7;
+
+  --green-400: #4ade80;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+
+  --red-400: #f87171;
+  --red-500: #ef4444;
+
+  --amber-400: #fbbf24;
+  --amber-500: #f59e0b;
+
+  --blue-400: #60a5fa;
+
+  /* Surface / Background */
+  --bg-base:        #050811;
+  --bg-surface-1:   rgba(13, 18, 32, 0.7);
+  --bg-surface-2:   rgba(20, 28, 50, 0.55);
+  --bg-surface-3:   rgba(28, 36, 60, 0.4);
+  --border:         rgba(255, 255, 255, 0.07);
+  --border-accent:  rgba(99, 102, 241, 0.4);
+
+  /* Text */
+  --text-primary:   #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted:     #64748b;
+
+  /* Glow */
+  --glow-indigo: 0 0 20px rgba(99, 102, 241, 0.25);
+  --glow-green:  0 0 20px rgba(34, 197, 94, 0.2);
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
-}
-
-html,
-body {
   margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
   min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: #f8fbff;
-  color: var(--text);
-  font-family:
-    var(--font-geist), ui-rounded, "Avenir Next", "Segoe UI", system-ui, -apple-system,
-    BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
 }
 
-button,
-input,
-textarea {
+button, input, textarea, select {
   font: inherit;
 }
 
 button {
   cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Selection */
+::selection {
+  background: rgba(99, 102, 241, 0.35);
+  color: var(--text-primary);
 }
 
 .sr-only {
