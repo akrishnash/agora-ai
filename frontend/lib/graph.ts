@@ -27,10 +27,10 @@ const MIN_CONF = 16;
 const MAX_CONF = 98;
 
 const RELATION_COLOR: Record<Relation, string> = {
-  opens: "#818cf8",
-  supports: "#22c55e",
-  challenges: "#ef4444",
-  revises: "#f59e0b",
+  opens: "#6e6e80",
+  supports: "#10a37f",
+  challenges: "#d1453b",
+  revises: "#c2760a",
 };
 
 /**

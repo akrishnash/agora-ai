@@ -50,19 +50,19 @@ const SUGGESTED_TOPICS = [
     title: "Should frontier AI models be open source?",
     desc: "Transparent safety audits vs. critical security misuse risks",
     format: "Oxford" as DebateFormat,
-    gradient: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+    gradient: "#10a37f",
   },
   {
     title: "Should nuclear energy replace coal for baseload power?",
     desc: "Decarbonization speed vs. waste, cost, and safety trade-offs",
     format: "Scientific Review" as DebateFormat,
-    gradient: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+    gradient: "#6e6e80",
   },
   {
     title: "Should social media be banned for users under 16?",
     desc: "Child wellbeing vs. speech, enforcement, and access rights",
     format: "Supreme Court" as DebateFormat,
-    gradient: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+    gradient: "#c2760a",
   },
 ];
 

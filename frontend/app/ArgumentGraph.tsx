@@ -153,7 +153,7 @@ function GraphInner({ session, visibleCount }: { session: DebateSession; visible
         proOptions={{ hideAttribution: true }}
         className={styles.flow}
       >
-        <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="rgba(148,163,184,0.12)" />
+        <Background variant={BackgroundVariant.Dots} gap={22} size={1} color="rgba(13,13,13,0.08)" />
         <Controls showInteractive={false} className={styles.controls} position="bottom-right" />
       </ReactFlow>
     </div>
