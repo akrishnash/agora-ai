@@ -450,7 +450,7 @@ export default function Home() {
                 </div>
 
                 <div className={styles.graphCanvas}>
-                  <ArgumentGraph session={session} visibleCount={visibleCount} />
+                  <ArgumentGraph session={session} visibleCount={visibleCount} activeSpeakerId={activeSpeaker?.id ?? null} />
                   {isIntervening && (
                     <div className={styles.graphOverlay}>
                       <Loader2 size={18} className={styles.spin} />

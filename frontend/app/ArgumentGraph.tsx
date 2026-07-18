@@ -15,10 +15,11 @@ import {
   useReactFlow,
   type Edge,
   type NodeProps,
+  type NodeTypes,
 } from "@xyflow/react";
 import { CheckCircle2, Flame, Gavel, RefreshCw } from "lucide-react";
 import { memo, useEffect, useRef } from "react";
-import { deriveGraph, type ClaimNode as ClaimNodeType } from "@/lib/graph";
+import { deriveGraph, type AgoraNode, type ClaimNode as ClaimNodeType, type LaneNode as LaneNodeType } from "@/lib/graph";
 import type { DebateSession } from "@/lib/types";
 import styles from "./ArgumentGraph.module.css";
 
@@ -46,28 +47,47 @@ const REL = {
   revises: RefreshCw,
 } as const;
 
+/** A speaker's lane — pinned avatar + name on the left, faint band across. */
+const LaneNode = memo(function LaneNode({ data }: NodeProps<LaneNodeType>) {
+  const stance = data.isModerator ? "mod" : data.expert?.stance ?? "mixed";
+  return (
+    <div
+      className={styles.lane}
+      data-active={data.active ? "true" : "false"}
+      style={{ width: data.width, height: data.height }}
+    >
+      <div className={styles.laneRail} data-stance={stance}>
+        <div className={styles.laneAvatar} data-stance={stance}>
+          {data.isModerator ? "AG" : getInitials(data.expert?.name ?? "?")}
+        </div>
+        <div className={styles.laneWho}>
+          <span className={styles.laneName}>{data.isModerator ? "Moderator" : data.expert?.name ?? "Expert"}</span>
+          <span className={styles.laneRole}>{data.isModerator ? "Agora" : data.expert?.role ?? ""}</span>
+        </div>
+        {data.active && <span className={styles.laneSpeaking}>speaking</span>}
+      </div>
+    </div>
+  );
+});
+
+/** A single claim spoken by one person, in that person's lane. */
 const ClaimNode = memo(function ClaimNode({ data }: NodeProps<ClaimNodeType>) {
   const RelIcon = REL[data.relation];
-  const stance = data.isModerator ? "mod" : data.expert?.stance ?? "mixed";
 
   return (
-    <div className={styles.node} data-status={data.status} data-newest={data.isNewest ? "true" : "false"}>
+    <div
+      className={styles.node}
+      data-status={data.status}
+      data-newest={data.isNewest ? "true" : "false"}
+      data-active={data.isActive ? "true" : "false"}
+    >
       <Handle type="target" position={Position.Left} className={styles.handle} />
 
       <div className={styles.nodeHead}>
-        <div className={styles.avatar} data-stance={stance}>
-          {data.isModerator ? "AG" : getInitials(data.expert?.name ?? "??")}
-        </div>
-        <div className={styles.who}>
-          <span className={styles.name}>
-            {data.isModerator ? "Moderator" : data.expert?.name ?? "Expert"}
-          </span>
-          <span className={styles.role}>
-            {data.isModerator ? "Agora" : data.expert?.role ?? ""}
-          </span>
-        </div>
+        <span className={styles.order}>{data.order}</span>
+        <span className={styles.headName}>{data.isModerator ? "Moderator" : data.expert?.name ?? "Expert"}</span>
         <div className={styles.relBadge} data-rel={data.relation}>
-          <RelIcon size={11} />
+          <RelIcon size={10} />
         </div>
       </div>
 
@@ -96,40 +116,44 @@ const ClaimNode = memo(function ClaimNode({ data }: NodeProps<ClaimNodeType>) {
   );
 });
 
-const NODE_TYPES = { claim: ClaimNode };
+const NODE_TYPES = { claim: ClaimNode, lane: LaneNode } as unknown as NodeTypes;
 
-function GraphInner({ session, visibleCount }: { session: DebateSession; visibleCount: number }) {
-  const [nodes, setNodes, onNodesChange] = useNodesState<ClaimNodeType>([]);
+function GraphInner({
+  session,
+  visibleCount,
+  activeSpeakerId,
+}: {
+  session: DebateSession;
+  visibleCount: number;
+  activeSpeakerId: string | null;
+}) {
+  const [nodes, setNodes, onNodesChange] = useNodesState<AgoraNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const rf = useReactFlow();
   const initialized = useNodesInitialized();
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const g = deriveGraph(session, visibleCount);
+    const g = deriveGraph(session, visibleCount, activeSpeakerId);
     setNodes(g.nodes);
     setEdges(g.edges);
-  }, [session, visibleCount, setNodes, setEdges]);
+  }, [session, visibleCount, activeSpeakerId, setNodes, setEdges]);
 
-  // Fit only once the new nodes are actually measured — otherwise React Flow
-  // fits to zero-size nodes and pans the whole graph off-screen.
+  // Fit only once the new nodes are measured — avoids the empty/clipped-graph race.
   useEffect(() => {
     if (!initialized) return;
-    const id = requestAnimationFrame(() =>
-      rf.fitView({ padding: 0.2, duration: 400, maxZoom: 1.15 })
-    );
+    const id = requestAnimationFrame(() => rf.fitView({ padding: 0.16, duration: 400, maxZoom: 1.1 }));
     return () => cancelAnimationFrame(id);
   }, [initialized, nodes, rf]);
 
-  // Re-fit when the canvas resizes (e.g. the decision brief expands beneath it).
-  // Debounced trailing fit so we settle on the FINAL size, not mid-animation.
+  // Re-fit on canvas resize (e.g. the decision brief expands beneath it).
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
     let t: ReturnType<typeof setTimeout>;
     const ro = new ResizeObserver(() => {
       clearTimeout(t);
-      t = setTimeout(() => rf.fitView({ padding: 0.2, maxZoom: 1.15, duration: 200 }), 130);
+      t = setTimeout(() => rf.fitView({ padding: 0.16, maxZoom: 1.1, duration: 200 }), 130);
     });
     ro.observe(el);
     return () => { clearTimeout(t); ro.disconnect(); };
@@ -144,23 +168,27 @@ function GraphInner({ session, visibleCount }: { session: DebateSession; visible
         onEdgesChange={onEdgesChange}
         nodeTypes={NODE_TYPES}
         fitView
-        fitViewOptions={{ padding: 0.2, maxZoom: 1.15 }}
+        fitViewOptions={{ padding: 0.16, maxZoom: 1.1 }}
         minZoom={0.3}
         maxZoom={1.6}
-        nodesDraggable
+        nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable
         proOptions={{ hideAttribution: true }}
         className={styles.flow}
       >
-        <Background variant={BackgroundVariant.Dots} gap={22} size={1} color="rgba(13,13,13,0.08)" />
+        <Background variant={BackgroundVariant.Dots} gap={22} size={1} color="rgba(13,13,13,0.06)" />
         <Controls showInteractive={false} className={styles.controls} position="bottom-right" />
       </ReactFlow>
     </div>
   );
 }
 
-export default function ArgumentGraph(props: { session: DebateSession; visibleCount: number }) {
+export default function ArgumentGraph(props: {
+  session: DebateSession;
+  visibleCount: number;
+  activeSpeakerId: string | null;
+}) {
   return (
     <ReactFlowProvider>
       <GraphInner {...props} />

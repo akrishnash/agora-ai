@@ -1,33 +1,100 @@
 /* ============================================================
-   ARGUMENT GRAPH — light, minimal React Flow nodes
+   ARGUMENT GRAPH — conversation lanes, light & minimal
    ============================================================ */
 
 .flowWrap { height: 100%; width: 100%; }
 .flow { background: transparent; height: 100%; width: 100%; }
+
+/* ── SPEAKER LANE (background band, one per person) ─────────── */
+.lane {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.lane[data-active="true"] {
+  background: var(--green-weak);
+  border-color: rgba(16, 163, 127, 0.35);
+  box-shadow: inset 3px 0 0 var(--green);
+}
+
+.laneRail {
+  align-items: center;
+  display: flex;
+  gap: 0.6rem;
+  height: 100%;
+  padding: 0 0.75rem;
+  position: absolute;
+  width: 152px;
+}
+
+.laneAvatar {
+  align-items: center;
+  border-radius: 9px;
+  display: flex;
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  height: 38px;
+  justify-content: center;
+  letter-spacing: 0.01em;
+  width: 38px;
+}
+
+.laneAvatar[data-stance="support"] { background: var(--support-weak);   color: var(--support); }
+.laneAvatar[data-stance="oppose"]  { background: var(--challenge-weak); color: var(--challenge); }
+.laneAvatar[data-stance="mixed"]   { background: var(--revise-weak);    color: var(--revise); }
+.laneAvatar[data-stance="mod"]     { background: var(--neutral-weak);   color: var(--neutral); }
+
+.laneWho { display: flex; flex-direction: column; min-width: 0; }
+.laneName { color: var(--text-primary); font-size: 0.74rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.laneRole { color: var(--text-muted); font-size: 0.6rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.laneSpeaking {
+  align-items: center;
+  background: var(--green);
+  border-radius: 9999px;
+  color: #fff;
+  display: flex;
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 0.1rem 0.35rem;
+  position: absolute;
+  right: 0.5rem;
+  text-transform: uppercase;
+  top: 0.5rem;
+  animation: speakPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes speakPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 
 /* ── CLAIM NODE ─────────────────────────────────────────────── */
 .node {
   animation: nodeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   background: var(--surface);
   border: 1px solid var(--border-strong);
-  border-radius: 12px;
+  border-radius: 11px;
   box-shadow: var(--shadow-md);
   color: var(--text-primary);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.75rem 0.8rem;
+  gap: 0.45rem;
+  padding: 0.6rem 0.7rem;
   position: relative;
   transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-  width: 228px;
+  width: 206px;
 }
 
 @keyframes nodeIn {
-  from { opacity: 0; transform: scale(0.92) translateY(5px); }
+  from { opacity: 0; transform: scale(0.9) translateY(6px); }
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* Status → left accent border + subtle tint */
 .node[data-status="open"]      { border-left: 3px solid var(--neutral); }
 .node[data-status="supported"] { border-left: 3px solid var(--support); }
 .node[data-status="contested"] { border-left: 3px solid var(--challenge); }
@@ -42,7 +109,6 @@
   50%       { box-shadow: 0 4px 20px rgba(209, 69, 59, 0.22); }
 }
 
-/* Newest node — spotlight */
 .node[data-newest="true"] {
   border-color: var(--accent);
   box-shadow: var(--shadow-lg);
@@ -50,31 +116,35 @@
 }
 
 /* ── HEAD ───────────────────────────────────────────────────── */
-.nodeHead { align-items: center; display: flex; gap: 0.5rem; }
+.nodeHead { align-items: center; display: flex; gap: 0.4rem; }
 
-.avatar {
+.order {
   align-items: center;
-  border-radius: 7px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-secondary);
   display: flex;
   flex-shrink: 0;
-  font-size: 0.6rem;
-  font-weight: 700;
-  height: 26px;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 600;
+  height: 17px;
   justify-content: center;
-  letter-spacing: 0.01em;
-  width: 26px;
+  width: 17px;
 }
 
-.avatar[data-stance="support"] { background: var(--support-weak);   color: var(--support); }
-.avatar[data-stance="oppose"]  { background: var(--challenge-weak); color: var(--challenge); }
-.avatar[data-stance="mixed"]   { background: var(--revise-weak);    color: var(--revise); }
-.avatar[data-stance="mod"]     { background: var(--neutral-weak);   color: var(--neutral); }
+.headName {
+  color: var(--text-secondary);
+  flex: 1;
+  font-size: 0.66rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-.who { display: flex; flex-direction: column; min-width: 0; }
-.name { color: var(--text-primary); font-size: 0.7rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.role { color: var(--text-muted); font-size: 0.58rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-.relBadge { align-items: center; border-radius: 6px; display: flex; height: 20px; justify-content: center; margin-left: auto; width: 20px; }
+.relBadge { align-items: center; border-radius: 5px; display: flex; flex-shrink: 0; height: 18px; justify-content: center; width: 18px; }
 .relBadge[data-rel="opens"]      { background: var(--neutral-weak);   color: var(--neutral); }
 .relBadge[data-rel="supports"]   { background: var(--support-weak);   color: var(--support); }
 .relBadge[data-rel="challenges"] { background: var(--challenge-weak); color: var(--challenge); }
@@ -84,22 +154,22 @@
 .headline {
   color: var(--text-primary);
   font-family: var(--font-display);
-  font-size: 0.79rem;
+  font-size: 0.76rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  line-height: 1.32;
+  line-height: 1.3;
 }
 
 /* ── METER ──────────────────────────────────────────────────── */
-.meter { align-items: center; display: flex; gap: 0.5rem; }
-.track { background: rgba(13, 13, 13, 0.08); border-radius: 3px; flex: 1; height: 5px; overflow: hidden; }
+.meter { align-items: center; display: flex; gap: 0.45rem; }
+.track { background: rgba(13, 13, 13, 0.08); border-radius: 3px; flex: 1; height: 4px; overflow: hidden; }
 .fill { border-radius: 3px; height: 100%; transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease; }
 .fill[data-status="open"]      { background: var(--neutral); }
 .fill[data-status="supported"] { background: var(--support); }
 .fill[data-status="contested"] { background: var(--challenge); }
 .fill[data-status="revised"]   { background: var(--revise); }
 
-.conf { color: var(--text-secondary); font-size: 0.66rem; font-variant-numeric: tabular-nums; font-weight: 600; min-width: 30px; text-align: right; }
+.conf { color: var(--text-secondary); font-size: 0.64rem; font-variant-numeric: tabular-nums; font-weight: 600; min-width: 28px; text-align: right; }
 
 /* ── FOOT ───────────────────────────────────────────────────── */
 .nodeFoot { align-items: center; display: flex; gap: 0.4rem; justify-content: space-between; }
@@ -107,10 +177,10 @@
 .statusPill {
   border-radius: 5px;
   font-family: var(--font-mono);
-  font-size: 0.54rem;
+  font-size: 0.52rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  padding: 0.12rem 0.4rem;
+  padding: 0.1rem 0.38rem;
   text-transform: uppercase;
 }
 
@@ -119,13 +189,13 @@
 .statusPill[data-status="contested"] { background: var(--challenge-weak); color: var(--challenge); }
 .statusPill[data-status="revised"]   { background: var(--revise-weak);    color: var(--revise); }
 
-.delta { font-family: var(--font-mono); font-size: 0.6rem; font-variant-numeric: tabular-nums; font-weight: 700; }
+.delta { font-family: var(--font-mono); font-size: 0.58rem; font-variant-numeric: tabular-nums; font-weight: 700; }
 .delta[data-dir="down"] { color: var(--challenge); }
 .delta[data-dir="up"]   { color: var(--support); }
 
 /* ── HANDLES ────────────────────────────────────────────────── */
 .handle {
-  background: rgba(13, 13, 13, 0.2) !important;
+  background: rgba(13, 13, 13, 0.18) !important;
   border: none !important;
   height: 5px !important;
   width: 5px !important;
