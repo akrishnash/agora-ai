@@ -15,7 +15,9 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    # Allow localhost AND any private LAN IPv4 origin (e.g. http://192.168.x.x:3000),
+    # so the app works whether it is opened via localhost or the network URL.
+    allow_origin_regex=r"http://(localhost|127\.0\.0\.1|0\.0\.0\.0|(\d{1,3}\.){3}\d{1,3})(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
