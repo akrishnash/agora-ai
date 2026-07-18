@@ -10,9 +10,9 @@ It was started during OpenAI Build Week, but the product direction is broader: A
 
 Watch the current product demo:
 
-<video src="assets/agora_ai_demo.mp4" controls width="100%"></video>
+[![Agora AI product demo](assets/agora_screen.png)](assets/agora_ai_demo.mp4)
 
-If the embedded player does not render on your Git host, open the file directly:
+Open the video directly:
 
 [assets/agora_ai_demo.mp4](assets/agora_ai_demo.mp4)
 
