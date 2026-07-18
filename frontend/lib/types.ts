@@ -14,12 +14,19 @@ export type Expert = {
   confidence: number;
 };
 
+export type EvidenceSource = {
+  label: string;
+  source_type: string;
+  relevance: string;
+};
+
 export type DebateTurn = {
   id: string;
   speaker_id: string;
   headline: string;
   claim: string;
   evidence: string;
+  sources: EvidenceSource[];
   relation: Relation;
   target_id: string | null;
   confidence: number;
@@ -41,3 +48,10 @@ export type DebateSession = {
   brief: ModeratorBrief;
   mode: SessionMode;
 };
+
+export type DebateStreamEvent =
+  | { type: "session"; session: DebateSession }
+  | { type: "turn"; turn: DebateTurn }
+  | { type: "brief"; brief: ModeratorBrief }
+  | { type: "error"; message: string }
+  | { type: "done" };

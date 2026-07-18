@@ -46,6 +46,7 @@ pnpm-debug.log*
 Thumbs.db
 .idea/
 .vscode/
+.claude/
 
 # Generated assets
 assets/generated/

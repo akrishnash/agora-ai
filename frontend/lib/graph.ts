@@ -184,18 +184,18 @@ export function deriveGraph(
 export function summarizeGraph(
   session: DebateSession,
   visibleCount: number
-): { claims: number; consensus: number; contested: number; revised: number } {
+): { claims: number; convergence: number; contested: number; revised: number } {
   const { nodes } = deriveGraph(session, visibleCount);
   const claimNodes = nodes.filter(
     (n): n is ClaimNode => n.type === "claim" && !(n.data as ClaimNodeData).isModerator
   );
-  const consensus = claimNodes.length
+  const convergence = claimNodes.length
     ? Math.round(claimNodes.reduce((s, n) => s + n.data.confidence, 0) / claimNodes.length)
     : 0;
   const claimAll = nodes.filter((n): n is ClaimNode => n.type === "claim");
   return {
     claims: claimNodes.length,
-    consensus,
+    convergence,
     contested: claimAll.filter((n) => n.data.status === "contested").length,
     revised: claimAll.filter((n) => n.data.status === "revised").length,
   };

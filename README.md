@@ -1,70 +1,154 @@
 # Agora AI
 
-Agora AI is an interactive reasoning platform for exploring complex questions through live debates between AI expert agents. Instead of returning one answer, Agora assembles a panel of domain perspectives, lets them argue with evidence, allows the user to interrupt or introduce new information, and ends with a clear map of consensus, disagreement, weak assumptions, and next steps.
+Agora AI is a reasoning interface for high-stakes questions.
 
-## Hackathon Vision
+Instead of collapsing a difficult topic into a single chatbot response, Agora turns the question into a replayable argument artifact: a credential-weighted panel, a turn-by-turn debate trace, an argument graph, evidence leads, user interventions, and a final decision brief.
 
-Search engines organize information. Agora organizes reasoning.
+It was started during OpenAI Build Week, but the product direction is broader: Agora is designed as an inspectable decision layer for teams that need to understand how a conclusion was reached, where it was challenged, and what remains unresolved.
 
-The project is being built for OpenAI Build Week as a complete product that demonstrates multi-agent orchestration, structured outputs, evidence-aware discussion, user intervention, and a polished product experience.
+## Demo
 
-## Core Experience
+Watch the current product demo:
 
-1. Enter a difficult question.
-2. Agora generates an ideal expert panel for the topic.
-3. A moderator runs a structured debate.
-4. Experts make claims, challenge each other, and cite supporting evidence.
-5. The user can interrupt, ask follow-ups, or inject new evidence.
-6. The debate updates its argument graph and final reasoning brief.
+<video src="assets/agora-ai-demo.mov" controls width="100%"></video>
 
-## Current Features
+If the embedded player does not render on your Git host, open the file directly:
 
-- **Living argument graph** (React Flow): every debate turn is a node, and each turn is linked to the earlier claim it answers by a colored edge — green *supports*, red *challenges*, amber *revises*. The graph grows turn by turn as the debate unfolds.
-- **Live belief revision**: when a claim is challenged, the engine propagates a confidence penalty to the target node — its meter visibly drops and its status flips to *contested* or *revised*, in real time.
-- **Timeline scrubber**: play, pause, step, or click any point to rewind the reasoning; the graph, confidences, and status re-derive for that moment in the debate.
-- **User intervention**: challenge a claim or inject evidence, and the panel appends new turns, grows the graph, and rewrites the brief.
-- **Executive decision brief**: strongest position, weakest assumption, unresolved disagreement, and the next research question, with a panel-consensus score.
-- **Topic-aware demo mode** (no API key required): a deterministic, on-topic fallback so a live demo never fails or shows the wrong debate. `OPENAI_API_KEY` upgrades panel generation and interventions to a live model via the Responses API with strict structured outputs.
+[assets/agora-ai-demo.mov](assets/agora-ai-demo.mov)
 
-## Repository Structure
+The demo uses the question:
+
+> Should frontier AI model weights be open sourced?
+
+This scenario was chosen because it creates a real policy and security tension: transparency and independent auditing versus misuse risk once model weights leave the control of the original lab.
+
+## Why Agora Exists
+
+Modern AI products are very good at producing answers. They are much weaker at showing the structure behind those answers.
+
+For decisions about AI deployment, security, governance, product risk, law, medicine, or public policy, the answer alone is often not enough. A useful decision artifact should show:
+
+- which claims were made,
+- which claims were challenged,
+- which assumptions carried the argument,
+- where the strongest disagreement remains,
+- what evidence should be inspected next,
+- and how the conclusion changes when a perspective is removed or challenged.
+
+Agora AI makes that reasoning visible.
+
+## Core Product Idea
+
+Agora treats reasoning as an object you can replay.
+
+Each session produces:
+
+- **Credential lenses** — domain perspectives such as safety, security, policy, economics, or law.
+- **Argument graph** — each claim becomes a node, and each relationship is mapped as support, challenge, or revision.
+- **Reasoning trace** — the debate can be paused, scrubbed, replayed, and inspected at any point.
+- **Evidence leads** — compact references to frameworks, precedents, or research categories worth checking next.
+- **Interventions** — the user can challenge a claim or inject evidence, causing new turns and graph updates.
+- **Final verdict** — a decision brief with the strongest position, weakest assumption, unresolved disagreement, and next research question.
+
+## What Makes It Different From ChatGPT
+
+ChatGPT gives a synthesized answer. Agora externalizes the reasoning process.
+
+The output is not just prose. It is a structured, replayable artifact:
+
+- claims are separated from speakers,
+- challenge relationships are explicit,
+- revisions are visible,
+- the final decision is linked to the debate trace,
+- and the user can inspect how the system got there.
+
+This makes Agora closer to a decision workbench than a chat interface.
+
+## Current Experience
+
+1. Start with a hard question.
+2. Agora opens with a cinematic question-intake animation.
+3. A panel of credential lenses is assembled.
+4. Claims appear one at a time.
+5. The argument graph grows as the debate unfolds.
+6. The user can remove or restore perspectives.
+7. The user can challenge the debate with a direct intervention.
+8. The app produces a dedicated **Final Verdict** tab for the decision brief.
+
+## Features
+
+- **Curated replay mode** for reliable demos and repeatable evaluation.
+- **OpenAI generation mode** when `OPENAI_API_KEY` is configured.
+- **Turn-by-turn debate orchestration** with structured outputs.
+- **React Flow argument map** with support, challenge, and revision edges.
+- **Credential badges** instead of fictional expert personas.
+- **Perspective filtering** to inspect the reasoning artifact with or without a lens.
+- **Timeline scrubber** to replay the argument state.
+- **Evidence lead cards** without pretending to have verified citations.
+- **Intervention flow** for user-directed challenges.
+- **Final Verdict tab** for a clean decision-board ending.
+- **Demo-safe fallback** so the product still works without API keys.
+
+## Demo Positioning
+
+Agora’s demo mode is intentional. For a live product demo, reliability matters.
+
+The app can run deterministic, curated sessions that show the product interaction clearly. The backend also supports OpenAI-powered generation for live debate sessions when an API key is provided.
+
+The product does **not** claim that evidence leads are verified citations. They are presented as source directions: frameworks, precedents, or research categories to inspect next.
+
+## Architecture
 
 ```text
 agora-ai/
-├── frontend/   # Next.js debate arena
-├── backend/    # FastAPI debate orchestration API
-├── docs/       # Product, architecture, and hackathon documentation
-├── prompts/    # Prompt templates and agent definitions
-├── assets/     # Images, demo assets, and design resources
-├── README.md
-├── LICENSE
-└── .gitignore
+├── frontend/   # Next.js app, React Flow graph, replay UI
+├── backend/    # FastAPI orchestration API
+├── docs/       # Architecture and demo planning notes
+├── assets/     # Demo video and project media
+└── README.md
 ```
 
-## Tech Stack
+### Frontend
 
-- Frontend: Next.js, React, TypeScript, CSS Modules
-- Backend: FastAPI, Python
-- AI: OpenAI Responses API
-- Deployment target: Vercel and Railway/Render/Fly.io
+- Next.js
+- React
+- TypeScript
+- CSS Modules
+- React Flow
+
+The frontend owns the product experience: prompt intake, cinematic intro, replay controls, panel filtering, graph visualization, intervention input, and the final verdict screen.
+
+### Backend
+
+- FastAPI
+- Pydantic models
+- OpenAI Responses API integration
+- Deterministic demo-session fallback
+
+The backend owns session generation, structured debate turns, intervention handling, and the final decision brief.
 
 ## Local Development
 
-Requires Python 3.11+ (tested through 3.14) and Node 18+.
+Requires Python 3.11+ and Node 18+.
 
 ### Backend
 
 ```bash
 cd backend
 python3 -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env               # optional; add OPENAI_API_KEY to go live
+cp .env.example .env
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8001
 ```
 
-The backend runs on `http://127.0.0.1:8001`.
+The backend runs on:
 
-Leave `OPENAI_API_KEY` blank for deterministic, topic-aware demo mode. Add an API key (in `backend/.env`, loaded automatically) to enable live model generation and interventions.
+```text
+http://127.0.0.1:8001
+```
+
+Leave `OPENAI_API_KEY` empty to use deterministic demo mode. Add an API key to enable OpenAI-generated sessions and interventions.
 
 ### Frontend
 
@@ -74,27 +158,59 @@ npm install
 npm run dev
 ```
 
-The frontend runs on `http://localhost:3000` and talks to the backend on port 8001 (override with `NEXT_PUBLIC_API_BASE_URL`).
+The frontend runs on:
 
-## Hackathon Demo
+```text
+http://localhost:3000
+```
 
-Recommended 3-minute flow:
+Override the backend URL with:
 
-1. Open on the arena and pick the curated scenario `Should frontier AI models be open source?`
-2. As the panel speaks, watch the **argument graph build node by node** — a red edge appears the moment the security researcher challenges the open-source advocate, and that claim's confidence meter visibly drops to *contested*.
-3. Use the **timeline scrubber** to rewind to the moment of challenge — the graph and confidences roll back with it. (This is the signature "reasoning is a thing you can replay" moment.)
-4. Run an intervention, e.g. `Introduce new evidence: model-weight leakage increases biosecurity risk.` — a new node grows on the graph and an expert **revises** in place.
-5. Land on the **Decision Brief**: strongest position, weakest assumption, unresolved disagreement, next question, with the panel-consensus score.
-6. End with: `Search engines organize information. Agora organizes reasoning.`
+```bash
+NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8001
+```
 
-## Development Principles
+## Validation
 
-- Build a working product, not a static demo.
-- Keep the first workflow extremely polished.
-- Prefer structured outputs for agent state and debate summaries.
-- Make the user a participant, not a passive transcript reader.
-- Document how Codex and OpenAI models are used throughout development.
+Frontend checks:
+
+```bash
+cd frontend
+npm run typecheck
+npm run lint
+npm run build
+```
+
+Backend smoke check:
+
+```bash
+cd backend
+source .venv/bin/activate
+python -m compileall app
+```
+
+## Deployment Notes
+
+- Deploy the frontend to Vercel or any Next.js-compatible host.
+- Deploy the backend to Railway, Render, Fly.io, or a similar Python host.
+- Set `NEXT_PUBLIC_API_BASE_URL` on the frontend to the deployed backend URL.
+- Set `AGORA_CORS_ORIGINS` on the backend to the deployed frontend origin.
+- Keep `OPENAI_API_KEY` optional so curated demo mode remains available.
+
+## Product Philosophy
+
+Agora is built around a simple belief:
+
+> The future of AI decision-making is not just better answers. It is better reasoning artifacts.
+
+For serious decisions, users should be able to replay, challenge, filter, and inspect the path to a conclusion.
+
+Search engines organize information. Chatbots generate answers. Agora organizes reasoning.
+
+## Origin
+
+Agora AI began as an OpenAI Build Week project. The hackathon constraint helped sharpen the first workflow, but the project is intended to continue as a serious exploration of argument mapping, decision intelligence, and inspectable AI reasoning.
 
 ## License
 
-This project is licensed under the MIT License.
+MIT

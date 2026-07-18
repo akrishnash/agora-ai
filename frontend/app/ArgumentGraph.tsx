@@ -19,18 +19,15 @@ import {
 } from "@xyflow/react";
 import { CheckCircle2, Flame, Gavel, RefreshCw } from "lucide-react";
 import { memo, useEffect, useRef } from "react";
+import { getCredentialCode, getSpeakerTitle } from "@/lib/credentials";
 import { deriveGraph, type AgoraNode, type ClaimNode as ClaimNodeType, type LaneNode as LaneNodeType } from "@/lib/graph";
 import type { DebateSession } from "@/lib/types";
 import styles from "./ArgumentGraph.module.css";
 
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0])
-    .join("")
-    .toUpperCase();
+function signalLabel(value: number) {
+  if (value >= 75) return "High";
+  if (value >= 50) return "Medium";
+  return "Low";
 }
 
 const STATUS_LABEL = {
@@ -58,11 +55,11 @@ const LaneNode = memo(function LaneNode({ data }: NodeProps<LaneNodeType>) {
     >
       <div className={styles.laneRail} data-stance={stance}>
         <div className={styles.laneAvatar} data-stance={stance}>
-          {data.isModerator ? "AG" : getInitials(data.expert?.name ?? "?")}
+          {getCredentialCode(data.expert?.role, data.isModerator)}
         </div>
         <div className={styles.laneWho}>
-          <span className={styles.laneName}>{data.isModerator ? "Moderator" : data.expert?.name ?? "Expert"}</span>
-          <span className={styles.laneRole}>{data.isModerator ? "Agora" : data.expert?.role ?? ""}</span>
+          <span className={styles.laneName}>{getSpeakerTitle(data.expert?.role, data.isModerator)}</span>
+          <span className={styles.laneRole}>{getCredentialCode(data.expert?.role, data.isModerator)} credential</span>
         </div>
         {data.active && <span className={styles.laneSpeaking}>speaking</span>}
       </div>
@@ -85,7 +82,7 @@ const ClaimNode = memo(function ClaimNode({ data }: NodeProps<ClaimNodeType>) {
 
       <div className={styles.nodeHead}>
         <span className={styles.order}>{data.order}</span>
-        <span className={styles.headName}>{data.isModerator ? "Moderator" : data.expert?.name ?? "Expert"}</span>
+        <span className={styles.headName}>{getSpeakerTitle(data.expert?.role, data.isModerator)}</span>
         <div className={styles.relBadge} data-rel={data.relation}>
           <RelIcon size={10} />
         </div>
@@ -97,7 +94,7 @@ const ClaimNode = memo(function ClaimNode({ data }: NodeProps<ClaimNodeType>) {
         <div className={styles.track}>
           <div className={styles.fill} data-status={data.status} style={{ width: `${data.confidence}%` }} />
         </div>
-        <span className={styles.conf}>{data.confidence}%</span>
+        <span className={styles.conf}>{signalLabel(data.confidence)}</span>
       </div>
 
       <div className={styles.nodeFoot}>
@@ -106,7 +103,7 @@ const ClaimNode = memo(function ClaimNode({ data }: NodeProps<ClaimNodeType>) {
         </span>
         {data.delta !== 0 && (
           <span className={styles.delta} data-dir={data.delta < 0 ? "down" : "up"}>
-            {data.delta < 0 ? "▼" : "▲"} {Math.abs(data.delta)}
+            {data.delta < 0 ? "▼" : "▲"} shift
           </span>
         )}
       </div>
@@ -171,6 +168,9 @@ function GraphInner({
         fitViewOptions={{ padding: 0.16, maxZoom: 1.1 }}
         minZoom={0.3}
         maxZoom={1.6}
+        zoomOnScroll={false}
+        panOnScroll={false}
+        preventScrolling={false}
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable

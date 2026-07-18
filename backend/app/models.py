@@ -13,6 +13,7 @@ SessionMode = Literal["demo", "openai"]
 class DebateRequest(BaseModel):
     topic: str = Field(min_length=8, max_length=240)
     format: DebateFormat = "Oxford"
+    demo_only: bool = False
 
 
 class Expert(BaseModel):
@@ -21,6 +22,12 @@ class Expert(BaseModel):
     role: str
     stance: Stance
     confidence: int = Field(ge=0, le=100)
+
+
+class EvidenceSource(BaseModel):
+    label: str = Field(min_length=1, max_length=120)
+    source_type: str = Field(min_length=1, max_length=60)
+    relevance: str = Field(min_length=1, max_length=180)
 
 
 class DebateTurn(BaseModel):
@@ -38,6 +45,7 @@ class DebateTurn(BaseModel):
     headline: str = Field(min_length=1, max_length=120)
     claim: str
     evidence: str
+    sources: list[EvidenceSource] = Field(default_factory=list)
     relation: Relation
     target_id: Optional[str] = None
     confidence: int = Field(ge=0, le=100)

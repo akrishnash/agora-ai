@@ -2,7 +2,7 @@
 
 ## Goal
 
-Show that Agora AI is not a chatbot. It is a live reasoning system where expert agents debate, challenge each other, update positions, and produce a useful decision brief.
+Show that Agora AI is not a chatbot. It is a system for producing replayable reasoning artifacts where expert agents debate turn by turn, challenge each other, update positions, expose evidence leads, and produce a useful decision brief.
 
 ## Demo Topic
 
@@ -28,7 +28,7 @@ Show Agora assembling the expert panel:
 
 ### 0:45-1:30 - Live Debate
 
-Experts make short evidence-backed claims. The transcript should feel active, not like a static essay.
+Experts make short evidence-backed claims. The transcript should feel active, not like a static essay. Point out that the graph, signal meters, reasoning trace, and evidence leads are all state derived from the same debate turns.
 
 ### 1:30-2:00 - User Intervention
 
@@ -38,7 +38,7 @@ Agora should route the intervention to the right speaker and update the argument
 
 ### 2:00-2:30 - Position Shift
 
-Inject new evidence and show one expert revising their confidence or stance. This is the signature moment.
+Inject new evidence and show one expert revising their stance. This is the signature moment.
 
 ### 2:30-3:00 - Final Brief
 
@@ -54,6 +54,9 @@ End with: "Search engines organize information. Agora organizes reasoning."
 ## Judging Alignment
 
 - Technological implementation: multi-agent orchestration, structured outputs, debate state, streaming-ready UI.
-- Design: serious intelligence-tool interface with live graph and intervention controls.
+- Technical depth: OpenAI mode creates the expert panel, then generates each turn in a separate structured call conditioned on prior turns.
+- Traceability: visible run mode, replay state, edge lineage, signal propagation, evidence leads, and an auditable graph.
+- Security: deterministic fallback, schema validation, configurable CORS, and no required API key for the public demo.
+- Design: serious intelligence-tool interface with a replayable graph and intervention controls.
 - Potential impact: education, policy analysis, research, product strategy, and critical thinking.
 - Quality of idea: an interactive reasoning arena instead of a passive answer bot.
